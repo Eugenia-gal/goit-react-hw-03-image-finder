@@ -5,17 +5,18 @@ import React, { Component } from 'react';
 
 export class SearchBar extends Component {
   state = {
-    search: '',
+    searchQuery: '',
+    currentPage: 1,
   };
 
   handleChange = e => {
-    this.setState({ search: e.target.value });
+    this.setState({ searchQuery: e.target.value });
   };
 
   handleSubmit = e => {
     e.preventDefault();
-    this.props.onSubmit(this.state);
-    this.setState('');
+    this.props.onSubmit(this.state.searchQuery);
+    this.setState({ searchQuery: '' });
   };
 
   render() {

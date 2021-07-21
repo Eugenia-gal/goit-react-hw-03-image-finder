@@ -2,21 +2,28 @@ import { Component } from 'react';
 import './App.css';
 import { SearchBar } from './Components/SearchBar/SearchBar';
 
+const STATUS = {
+  IDLE: 'idle',
+  PENDING: 'pending',
+  RESOLVED: 'resolved',
+  REJECTED: 'rejected',
+};
+
 class App extends Component {
   state = {
     searchQuery: '',
+    status: STATUS.IDLE,
+    activeImageId: null,
   };
 
-  handleSubmit = e => {
-    e.preventDefault();
-    console.log(e.target.elements.search);
-    // this.setState({ searchQuery: e.target });
+  saveSearchQuery = text => {
+    this.setState({ searchQuery: text });
   };
 
   render() {
     return (
       <div className="App">
-        <SearchBar onSubmit={this.handleSubmit} />
+        <SearchBar onSubmit={this.saveSearchQuery} />
       </div>
     );
   }
