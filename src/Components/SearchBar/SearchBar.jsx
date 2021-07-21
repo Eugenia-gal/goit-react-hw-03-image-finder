@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BiSearchAlt } from 'react-icons/bi';
+import { AiOutlineSearch } from 'react-icons/ai';
 import s from './SearchBar.module.scss';
 
 // TODO:
@@ -18,7 +18,6 @@ export class SearchBar extends Component {
   handleSubmit = e => {
     e.preventDefault();
     this.props.onSubmit(this.state.searchQuery);
-    this.setState({ searchQuery: '' });
   };
 
   render() {
@@ -26,10 +25,11 @@ export class SearchBar extends Component {
       <div className={s.wrapper}>
         <form className={s.form} onSubmit={this.handleSubmit}>
           <button className={s.submit_btn} type="submit">
-            <BiSearchAlt className={s.icon} />
+            <AiOutlineSearch className={s.icon} />
           </button>
           <input
             className={s.search_input}
+            placeholder="Search images and photos"
             type="text"
             name="search"
             value={this.state.input}
