@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import './App.css';
 import { SearchBar } from './Components/SearchBar/SearchBar';
+import { ImageGallery } from './Components/ImageGallery/ImageGallery';
 
 const STATUS = {
   IDLE: 'idle',
@@ -24,6 +25,7 @@ class App extends Component {
     return (
       <div className="App">
         <SearchBar onSubmit={this.saveSearchQuery} />
+        <ImageGallery />
       </div>
     );
   }
