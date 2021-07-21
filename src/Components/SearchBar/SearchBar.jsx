@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { BiSearchAlt } from 'react-icons/bi';
+import s from './SearchBar.module.scss';
 
 // TODO:
 // найти видео про вставку иконок в кнопку
@@ -21,15 +23,20 @@ export class SearchBar extends Component {
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
-        <button type="submit">Поиск</button>
-        <input
-          type="text"
-          name="search"
-          value={this.state.input}
-          onChange={this.handleChange}
-        />
-      </form>
+      <div className={s.wrapper}>
+        <form className={s.form} onSubmit={this.handleSubmit}>
+          <button className={s.submit_btn} type="submit">
+            <BiSearchAlt className={s.icon} />
+          </button>
+          <input
+            className={s.search_input}
+            type="text"
+            name="search"
+            value={this.state.input}
+            onChange={this.handleChange}
+          />
+        </form>
+      </div>
     );
   }
 }
