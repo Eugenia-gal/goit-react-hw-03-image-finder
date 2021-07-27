@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Loader from 'react-loader-spinner';
 import ImageGalleryItem from 'Components/ImageGalleryItem';
 import Button from 'Components/Button';
-import getImages from 'Services/getImages';
+import fetchImages from 'Services/getImages';
 import s from './ImageGallery.module.scss';
 import toast from 'react-hot-toast';
 // import Modal from 'Components/Modal/Modal';
@@ -30,27 +30,11 @@ export class ImageGallery extends Component {
 
     if (oldQuery !== newQuery) {
       this.setState({ currentPage: 1, images: [] });
-      this.setState({ status: STATUS.PENDING });
-      getImages(newQuery, newPage)
-        .then(images => {
-          this.setState(prevState => ({
-            images: [...prevState.images, ...images],
-          }));
-          this.setState({ status: STATUS.RESOLVED });
-        })
-        .catch(() => toast.error('Ooops, something going wrong.'));
+      this.getImages(newQuery, newPage);
     }
 
-    if (oldPage !== newPage) {
-      this.setState({ status: STATUS.PENDING });
-      getImages(newQuery, newPage)
-        .then(images => {
-          this.setState(prevState => ({
-            images: [...prevState.images, ...images],
-          }));
-          this.setState({ status: STATUS.RESOLVED });
-        })
-        .catch(() => toast.error('Ooops, something went wrong.'));
+    if (oldQuery === newQuery && oldPage !== newPage) {
+      this.getImages(newQuery, newPage);
     }
 
     window.scrollTo({
@@ -58,6 +42,25 @@ export class ImageGallery extends Component {
       behavior: 'smooth',
     });
   }
+
+  getImages = (query, page) => {
+    this.setState({ status: STATUS.PENDING });
+    fetchImages(query, page)
+      .then(images => {
+        if (images.length === 0) {
+          this.setState({ status: STATUS.IDLE });
+          return toast.error('Wrong query!', {
+            position: 'top-right',
+            duration: 2000,
+          });
+        }
+        this.setState(prevState => ({
+          images: [...prevState.images, ...images],
+        }));
+        this.setState({ status: STATUS.RESOLVED });
+      })
+      .catch(() => toast.error('Ooops, something went wrong.'));
+  };
 
   changeCurrentPage = () => {
     this.setState(prevState => ({ currentPage: prevState.currentPage + 1 }));
@@ -68,13 +71,9 @@ export class ImageGallery extends Component {
 
     return (
       <>
-        {status === STATUS.PENDING && (
-          <Loader type="ThreeDots" color="#3f51b5" height={100} width={100} />
-        )}
-
         <>
           <ul className={s.ImageGallery}>
-            {status === STATUS.RESOLVED &&
+            {images.length > 0 &&
               images.map(image => (
                 <ImageGalleryItem
                   key={image.id}
@@ -84,7 +83,15 @@ export class ImageGallery extends Component {
                 />
               ))}
           </ul>
-          {images.length > 0 && <Button onClick={this.changeCurrentPage} />}
+
+          {status === STATUS.PENDING && (
+            <Loader type="ThreeDots" color="#3f51b5" height={100} width={100} />
+          )}
+          {status === STATUS.RESOLVED && images.length > 0 ? (
+            <Button onClick={this.changeCurrentPage} />
+          ) : (
+            false
+          )}
         </>
       </>
     );

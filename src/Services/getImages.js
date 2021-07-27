@@ -3,7 +3,7 @@ import axios from 'axios';
 const baseURL = 'https://pixabay.com/api/';
 const apiKey = '21801737-49cda37636a05962c9a05323f';
 
-function getImages(query, page) {
+function fetchImages(query, page) {
   return axios
     .get(baseURL, {
       params: {
@@ -18,4 +18,4 @@ function getImages(query, page) {
     .then(response => response.data.hits);
 }
 
-export default getImages;
+export default fetchImages;
