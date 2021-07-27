@@ -1,19 +1,13 @@
 import { Component } from 'react';
-import './App.css';
+import { Toaster } from 'react-hot-toast';
 import { SearchBar } from './Components/SearchBar/SearchBar';
-import { ImageGallery } from './Components/ImageGallery/ImageGallery';
-
-const STATUS = {
-  IDLE: 'idle',
-  PENDING: 'pending',
-  RESOLVED: 'resolved',
-  REJECTED: 'rejected',
-};
+import ImageGallery from 'Components/ImageGallery/ImageGallery';
+import './App.css';
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 
 class App extends Component {
   state = {
     searchQuery: '',
-    status: STATUS.IDLE,
     activeImageId: null,
   };
 
@@ -22,10 +16,12 @@ class App extends Component {
   };
 
   render() {
+    const { searchQuery } = this.state;
     return (
       <div className="App">
         <SearchBar onSubmit={this.saveSearchQuery} />
-        <ImageGallery />
+        <ImageGallery query={searchQuery} />
+        <Toaster />
       </div>
     );
   }
