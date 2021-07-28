@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { AiOutlineSearch } from 'react-icons/ai';
 import toast from 'react-hot-toast';
 import s from './SearchBar.module.scss';
@@ -6,6 +7,10 @@ import s from './SearchBar.module.scss';
 export class SearchBar extends Component {
   state = {
     searchQuery: '',
+  };
+
+  static propTypes = {
+    onSubmit: PropTypes.func,
   };
 
   handleChange = e => {

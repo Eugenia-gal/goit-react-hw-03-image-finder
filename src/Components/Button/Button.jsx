@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import s from './Button.module.scss';
 
 function Button({ onClick }) {
@@ -11,9 +12,8 @@ function Button({ onClick }) {
   );
 }
 
-export default Button;
+Button.propTypes = {
+  onClick: PropTypes.func,
+};
 
-// window.scrollTo({
-//   top: document.documentElement.scrollHeight,
-//   behavior: 'smooth',
-// });
+export default Button;

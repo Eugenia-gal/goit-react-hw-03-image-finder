@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Loader from 'react-loader-spinner';
+import PropTypes from 'prop-types';
 import ImageGalleryItem from 'Components/ImageGalleryItem';
 import Button from 'Components/Button';
 import fetchImages from 'Services/getImages';
@@ -19,6 +20,11 @@ export class ImageGallery extends Component {
     images: [],
     status: STATUS.IDLE,
     error: null,
+  };
+
+  static propTypes = {
+    query: PropTypes.string,
+    onSelect: PropTypes.func,
   };
 
   componentDidUpdate(prevProps, prevState) {
