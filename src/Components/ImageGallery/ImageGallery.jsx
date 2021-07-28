@@ -18,8 +18,8 @@ export class ImageGallery extends Component {
   state = {
     currentPage: 1,
     images: [],
-    loading: false,
     status: STATUS.IDLE,
+    error: null,
   };
 
   componentDidUpdate(prevProps, prevState) {
@@ -29,11 +29,12 @@ export class ImageGallery extends Component {
     const newPage = this.state.currentPage;
 
     if (oldQuery !== newQuery) {
-      this.setState({ currentPage: 1, images: [] });
+      this.setState({ currentPage: 1, images: [], error: null });
       this.getImages(newQuery, newPage);
     }
 
     if (oldQuery === newQuery && oldPage !== newPage) {
+      this.setState({ error: null });
       this.getImages(newQuery, newPage);
     }
 
@@ -49,17 +50,30 @@ export class ImageGallery extends Component {
       .then(images => {
         if (images.length === 0) {
           this.setState({ status: STATUS.IDLE });
-          return toast.error('Wrong query!', {
-            position: 'top-right',
-            duration: 2000,
-          });
+          return toast.error(
+            'Search result is not successful. Enter the correct query and try again, please.',
+            {
+              position: 'top-right',
+              duration: 3000,
+            },
+          );
         }
         this.setState(prevState => ({
           images: [...prevState.images, ...images],
         }));
         this.setState({ status: STATUS.RESOLVED });
       })
-      .catch(() => toast.error('Ooops, something went wrong.'));
+      .catch(error => {
+        this.setState({ error: error.message });
+        this.setState({ status: STATUS.REJECTED });
+        toast.error(
+          'Oops! Something went wrong... Please try again. If the problem persists, contact our customer support',
+          {
+            position: 'top-right',
+            duration: 3000,
+          },
+        );
+      });
   };
 
   changeCurrentPage = () => {
@@ -67,32 +81,29 @@ export class ImageGallery extends Component {
   };
 
   render() {
-    const { images, status } = this.state;
+    const { images, status, error } = this.state;
 
     return (
       <>
-        <>
-          <ul className={s.ImageGallery}>
-            {images.length > 0 &&
-              images.map(image => (
-                <ImageGalleryItem
-                  key={image.id}
-                  src={image.webformatURL}
-                  alt={image.tags}
-                  modalImage={image.largeImageURL}
-                />
-              ))}
-          </ul>
+        {status === STATUS.REJECTED && <h1>Error: {error}</h1>}
+        <ul className={s.ImageGallery}>
+          {images.length > 0 &&
+            images.map(image => (
+              <ImageGalleryItem
+                key={image.id}
+                src={image.webformatURL}
+                alt={image.tags}
+                modalImage={image.largeImageURL}
+              />
+            ))}
+        </ul>
 
-          {status === STATUS.PENDING && (
-            <Loader type="ThreeDots" color="#3f51b5" height={100} width={100} />
-          )}
-          {status === STATUS.RESOLVED && images.length > 0 ? (
-            <Button onClick={this.changeCurrentPage} />
-          ) : (
-            false
-          )}
-        </>
+        {status === STATUS.PENDING && (
+          <Loader type="ThreeDots" color="#3f51b5" height={100} width={100} />
+        )}
+        {status === STATUS.RESOLVED && images.length > 0 && (
+          <Button onClick={this.changeCurrentPage} />
+        )}
       </>
     );
   }
