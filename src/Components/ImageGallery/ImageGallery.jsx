@@ -59,12 +59,11 @@ export class ImageGallery extends Component {
         }
         this.setState(prevState => ({
           images: [...prevState.images, ...images],
+          status: STATUS.RESOLVED,
         }));
-        this.setState({ status: STATUS.RESOLVED });
       })
       .catch(error => {
-        this.setState({ error: error.message });
-        this.setState({ status: STATUS.REJECTED });
+        this.setState({ error: error.message, status: STATUS.REJECTED });
         toast.error(
           'Oops! Something went wrong... Please try again. If the problem persists, contact our customer support',
           {
