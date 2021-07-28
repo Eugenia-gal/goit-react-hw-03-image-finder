@@ -5,7 +5,6 @@ import Button from 'Components/Button';
 import fetchImages from 'Services/getImages';
 import s from './ImageGallery.module.scss';
 import toast from 'react-hot-toast';
-// import Modal from 'Components/Modal/Modal';
 
 const STATUS = {
   IDLE: 'idle',
@@ -82,6 +81,7 @@ export class ImageGallery extends Component {
 
   render() {
     const { images, status, error } = this.state;
+    const { onSelect } = this.props;
 
     return (
       <>
@@ -92,8 +92,9 @@ export class ImageGallery extends Component {
               <ImageGalleryItem
                 key={image.id}
                 src={image.webformatURL}
-                alt={image.tags}
-                modalImage={image.largeImageURL}
+                tags={image.tags}
+                largeImage={image.largeImageURL}
+                onClick={onSelect}
               />
             ))}
         </ul>
