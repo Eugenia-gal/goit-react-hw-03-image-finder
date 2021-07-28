@@ -9,40 +9,38 @@ import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
 class App extends Component {
   state = {
     searchQuery: '',
-    selectedImageURL: null,
+    selectedImage: null,
     selectedImageTags: null,
-    showModal: false,
   };
 
   saveSearchQuery = text => {
     this.setState({ searchQuery: text });
   };
 
-  handleSelectImage = selectedImage => {
-    console.log('Кликнули');
-    console.log(selectedImage.tags);
-    console.log(selectedImage.largeImage);
+  handleSelectImage = ({ largeImage, tags }) => {
     this.setState({
-      selectedImageURL: selectedImage.largeImage,
-      selectedImageTags: selectedImage.tags,
+      selectedImage: largeImage,
+      selectedImageTags: tags,
     });
-    this.toggleModal();
   };
 
-  toggleModal = () => {
-    this.setState(prevState => ({
-      showModal: !prevState.showModal,
-    }));
+  handleCloseModal = () => {
+    this.setState({ selectedImage: null });
   };
 
   render() {
-    const { searchQuery, showModal, selectedImageURL, selectedImageTags } =
-      this.state;
+    const { searchQuery, selectedImage, selectedImageTags } = this.state;
     return (
       <div className="App">
         <SearchBar onSubmit={this.saveSearchQuery} />
         <ImageGallery query={searchQuery} onSelect={this.handleSelectImage} />
-        {showModal && <Modal src={selectedImageURL} tags={selectedImageTags} />}
+        {selectedImage && (
+          <Modal
+            src={selectedImage}
+            tags={selectedImageTags}
+            onClose={this.handleCloseModal}
+          />
+        )}
         <Toaster />
       </div>
     );
