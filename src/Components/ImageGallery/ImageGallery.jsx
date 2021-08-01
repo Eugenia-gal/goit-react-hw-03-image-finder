@@ -27,7 +27,7 @@ export class ImageGallery extends Component {
     onSelect: PropTypes.func,
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
     const oldQuery = prevProps.query;
     const newQuery = this.props.query;
     const oldPage = prevState.currentPage;
@@ -38,46 +38,45 @@ export class ImageGallery extends Component {
       this.getImages(newQuery, newPage);
     }
 
-    if (oldQuery === newQuery && oldPage !== newPage) {
+    if (oldQuery === newQuery && oldPage !== newPage && newPage !== 1) {
       this.setState({ error: null });
-      this.getImages(newQuery, newPage);
-    }
+      await this.getImages(newQuery, newPage);
 
-    window.scrollTo({
-      top: document.documentElement.scrollHeight,
-      behavior: 'smooth',
-    });
+      window.scrollTo({
+        top: document.documentElement.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
   }
 
-  getImages = (query, page) => {
+  getImages = async (query, page) => {
     this.setState({ status: STATUS.PENDING });
-    fetchImages(query, page)
-      .then(images => {
-        if (images.length === 0) {
-          this.setState({ status: STATUS.IDLE });
-          return toast.error(
-            'Search result is not successful. Enter the correct query and try again, please.',
-            {
-              position: 'top-right',
-              duration: 3000,
-            },
-          );
-        }
-        this.setState(prevState => ({
-          images: [...prevState.images, ...images],
-          status: STATUS.RESOLVED,
-        }));
-      })
-      .catch(error => {
-        this.setState({ error: error.message, status: STATUS.REJECTED });
-        toast.error(
-          'Oops! Something went wrong... Please try again. If the problem persists, contact our customer support',
+    try {
+      const images = await fetchImages(query, page);
+      if (images.length === 0) {
+        this.setState({ status: STATUS.IDLE });
+        return toast.error(
+          'Search result is not successful. Enter the correct query and try again, please.',
           {
             position: 'top-right',
             duration: 3000,
           },
         );
-      });
+      }
+      this.setState(prevState => ({
+        images: [...prevState.images, ...images],
+        status: STATUS.RESOLVED,
+      }));
+    } catch (error) {
+      this.setState({ error: error.message, status: STATUS.REJECTED });
+      toast.error(
+        'Oops! Something went wrong... Please try again. If the problem persists, contact our customer support',
+        {
+          position: 'top-right',
+          duration: 3000,
+        },
+      );
+    }
   };
 
   changeCurrentPage = () => {
